@@ -1,0 +1,88 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.10.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+    id 'maven-publish'
+}
+
+group = 'com.ywl.study'
+version = '0.0.1.RELEASE'
+sourceCompatibility = '1.8'
+
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        //maven私服仓库
+        url 'http://106.13.99.195:8088/nexus/content/groups/public/'
+    }
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    //增加dubbo依赖
+    compile (group: 'com.alibaba', name: 'dubbo', version: '2.5.3'){
+        exclude group: "org.springframework",module:"spring"
+    }
+    compile group: 'com.101tec', name: 'zkclient', version: '0.3'
+    compile ('org.apache.zookeeper:zookeeper:3.4.8'){
+        exclude group :'org.slf4j' ,module: 'slf4j-log4j12'
+    }
+    //增加dubbo依赖
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+}
+
+task apiJar(type: Jar) {
+    delete "build/libs/${project.name}-${version}.jar"
+    baseName project.name
+    include('packagepath/service/*.java')
+
+}
+
+task clearJar(type: Delete) {
+    delete 'build/libs/${project.name}-${version}.jar'
+}
+
+task makeJar(type:org.gradle.api.tasks.bundling.Jar) {
+    //指定生成的jar名
+    baseName project.name
+    from('build/classes/java/main')
+    include('com/ywl/study/service/*.class')
+}
+
+makeJar.dependsOn(clearJar, classes)
+
+//打包源码
+task sourceJar(type: Jar){
+    from ("src/main/java")
+    include('com/ywl/study/service/*.java')
+    classifier "sources"
+}
+
+publishing {
+    publications {
+        mypublish(MavenPublication) {
+            //指定group/artifact/version信息，可以不填。默认使用项目group/name/version作为groupId/artifactId/version
+            groupId = project.group
+            artifactId = project.name
+            version = project.version
+
+//            //配置上传源码
+//            artifact sourceJar  //指定上传的jar
+            artifact makeJar   //指定上传的jar
+
+        }
+    }
+    repositories {
+        maven {
+            url = "http://106.13.99.195:8088/nexus/content/repositories/thirdparty"
+            //认证用户和密码
+            credentials {
+                username = 'admin'
+                password = 'admin123'
+            }
+        }
+    }
+}

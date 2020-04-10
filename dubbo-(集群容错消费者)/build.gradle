@@ -1,0 +1,36 @@
+plugins {
+    id 'org.springframework.boot' version '1.5.10.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.9.RELEASE'
+    id 'java'
+}
+
+group = 'com.ywl.study'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '1.8'
+repositories {
+    mavenLocal()
+    mavenCentral()
+    maven {
+        //maven私服仓库
+        url 'http://106.13.99.195:8088/nexus/content/groups/public/'
+    }
+}
+
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter'
+    compile 'org.springframework.boot:spring-boot-starter-web'
+    //增加dubbo依赖
+    compile (group: 'com.alibaba', name: 'dubbo', version: '2.5.3'){
+        exclude group: "org.springframework",module:"spring"
+    }
+    compile group: 'com.101tec', name: 'zkclient', version: '0.3'
+    compile ('org.apache.zookeeper:zookeeper:3.4.8'){
+        exclude group :'org.slf4j' ,module: 'slf4j-log4j12'
+    }
+    //增加dubbo依赖
+    //增加第三方接口
+    compile ('com.ywl.study:dubbo-rongcuo1:0.0.1.RELEASE')
+
+    testImplementation('org.springframework.boot:spring-boot-starter-test')
+}

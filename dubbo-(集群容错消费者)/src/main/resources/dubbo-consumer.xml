@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://code.alibabatech.com/schema/dubbo
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <dubbo:application name="${dubbo.application.name}" />
+    <!--    <dubbo:consumer timeout="1800000" retries="0" />-->
+    <dubbo:registry register="false" id="defaultRegister" protocol="zookeeper" default="true" address="${dubbo.registry.address}" />
+    <dubbo:registry register="false" id="chinaRegister" protocol="zookeeper" address="${dubbo.registry.address}" />
+    <!--轮询方式请求服务-->
+<!--    <dubbo:reference id="demoServiceConsumer" interface="com.ywl.study.service.IDemoService" check="false"  retries="2" loadbalance="roundrobin"/>-->
+    <dubbo:reference id="demoService" interface="com.ywl.study.service.IDemoService" check="false">
+       <dubbo:method name="methodInvoke" loadbalance="roundrobin"></dubbo:method>
+    </dubbo:reference>
+    <!--直连方式-->
+    <dubbo:reference id="demoService2" interface="com.ywl.study.service.IDemoService" check="false" url="dubbo://localhost:20881"/>
+
+    <!--从其他注册中心获取服务-->
+    <dubbo:reference id="helloService" registry="chinaRegister" interface="com.ywl.study.service.IHelloService"  check="false"></dubbo:reference>
+</beans>

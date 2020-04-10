@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://code.alibabatech.com/schema/dubbo
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!-- 指定web服务名字 -->
+    <dubbo:application name="${dubbo.application.name}"/>
+    <!-- 声明服务注册中心 -->
+    <dubbo:registry subscribe="false" id="register" protocol="zookeeper" address="${dubbo.registry.address}"/>
+    <dubbo:registry subscribe="false" id="register2" protocol="zookeeper" address="${dubbo.registry.address}"/>
+    <dubbo:registry id="local" address="zookeeper://127.0.0.1:2181"/>
+    <!-- 指定传输层通信协议 -->
+    <dubbo:protocol name="${dubbo.protocol.name}" port="${dubbo.protocol.port}"/>
+    <!-- 暴露你的服务地址 -->
+    <!-- 这里是具体实现类,id和上面的暴露的服务接口ref要一致,dubbo就是通过这个来注册对应的服务 -->
+    <!-- 同模块的registry使用local，不同模块的使用远程的register -->
+    <dubbo:service
+            ref="demoService"
+            interface="com.ywl.study.service.IDemoService"
+            registry="register"
+    />
+
+    <dubbo:service
+            ref="helloService"
+            interface="com.ywl.study.service.IHelloService"
+            registry="register2"
+    />
+</beans>
