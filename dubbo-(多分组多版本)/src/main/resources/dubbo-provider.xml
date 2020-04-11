@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://code.alibabatech.com/schema/dubbo
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <!-- 指定web服务名字 -->
+    <dubbo:application name="${dubbo.application.name}"/>
+    <!-- 声明服务注册中心 -->
+    <dubbo:registry subscribe="false" id="register" protocol="zookeeper" address="${dubbo.registry.address}"/>
+    <!--    <dubbo:registry id="local" address="zookeeper://127.0.0.1:2181"/>-->
+    <!-- 指定传输层通信协议 -->
+    <dubbo:protocol name="${dubbo.protocol.name}" port="${dubbo.protocol.port}"/>
+    <!--    <dubbo:protocol name="rmi" port="1099"/>-->
+    <!-- 暴露你的服务地址 -->
+    <!-- 这里是具体实现类,id和上面的暴露的服务接口ref要一致,dubbo就是通过这个来注册对应的服务 -->
+    <!-- 同模块的registry使用local，不同模块的使用远程的register -->
+    <!-- 暴露你的服务地址 -->
+<!--    <dubbo:service-->
+<!--            ref="demoService1"-->
+<!--            interface="com.ywl.study.service.IDemoService"-->
+<!--            protocol="dubbo"-->
+<!--            group="new"-->
+<!--    />-->
+<!--    <dubbo:service-->
+<!--            ref="demoService2"-->
+<!--            interface="com.ywl.study.service.IDemoService"-->
+<!--            protocol="dubbo"-->
+<!--            group="old"-->
+<!--    />-->
+    <dubbo:service
+            ref="demoService1"
+            interface="com.ywl.study.service.IDemoService"
+            protocol="dubbo"
+            version="0.0.1"
+    />
+    <dubbo:service
+        ref="demoService2"
+        interface="com.ywl.study.service.IDemoService"
+        protocol="dubbo"
+        version="0.0.2"
+/>
+
+    <dubbo:service
+            ref="demoServiceCallback"
+            interface="com.ywl.study.service.IDemoSerivce2"
+            protocol="dubbo"
+            connections="2"
+            callbacks="10"
+    >
+        <dubbo:method name="getUserDetail">
+            <dubbo:argument  index="1" callback="true"/>
+        </dubbo:method>
+        <dubbo:method name="exportData">
+            <dubbo:argument  type="com.ywl.study.service.CallbackListener" callback="true"/>
+        </dubbo:method>
+    </dubbo:service>
+</beans>

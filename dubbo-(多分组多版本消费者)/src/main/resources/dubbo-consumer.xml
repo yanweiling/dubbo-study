@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:dubbo="http://code.alibabatech.com/schema/dubbo"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans
+    http://www.springframework.org/schema/beans/spring-beans.xsd
+    http://code.alibabatech.com/schema/dubbo
+    http://code.alibabatech.com/schema/dubbo/dubbo.xsd">
+    <dubbo:application name="${dubbo.application.name}" />
+    <dubbo:registry  protocol="zookeeper" default="true" address="${dubbo.registry.address}" />
+    <dubbo:protocol name="${dubbo.protocol.name}" port="${dubbo.protocol.port}"/>
+    <!-- 暴露你的服务地址 -->
+<!--    <dubbo:reference-->
+<!--            id="demoServiceFirst"-->
+<!--            interface="com.ywl.study.service.IDemoService"-->
+<!--            protocol="dubbo"-->
+<!--            group="new"-->
+<!--            check="false"-->
+<!--    />-->
+<!--    <dubbo:reference-->
+<!--            id="demoServiceSecond"-->
+<!--            interface="com.ywl.study.service.IDemoService"-->
+<!--            protocol="dubbo"-->
+<!--            group="old"-->
+<!--            check="false"-->
+<!--    />-->
+<!--    <dubbo:reference-->
+<!--            id="demoServiceThird"-->
+<!--            interface="com.ywl.study.service.IDemoService"-->
+<!--            protocol="dubbo"-->
+<!--            group="old,new"-->
+<!--            check="false"-->
+<!--    />-->
+    <dubbo:reference
+            id="demoServiceFirst"
+            interface="com.ywl.study.service.IDemoService"
+            protocol="dubbo"
+            version="0.0.1"
+            check="false"
+            timeout="6000"
+            async="true"
+    />
+    <dubbo:reference
+            id="demoServiceSecond"
+            interface="com.ywl.study.service.IDemoService"
+            protocol="dubbo"
+            version="0.0.2"
+            check="false"
+    />
+
+    <dubbo:reference
+            id="demoServiceDownLevel"
+            interface="com.ywl.study.service.IDemoService"
+            protocol="dubbo"
+            version="0.0.1"
+            check="false"
+            timeout="1000"
+            mock="return 1000"
+    />
+
+    <dubbo:reference
+            id="demoServiceCall"
+            interface="com.ywl.study.service.IDemoSerivce2"
+            protocol="dubbo" check="false"
+    />
+</beans>
